@@ -25,7 +25,7 @@ pump(source, dest, function(err) {
 });
 
 setTimeout(function() {
-	dest.destroy();
+	dest.destroy(); // when dest is closes pump will destroy source
 }, 1000);
 ```
 
