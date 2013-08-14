@@ -1,6 +1,14 @@
 var once = require('once');
 var noop = function() {};
 
+var patch = function(stream, onend) { // patch 0.8 stream since they dont emit finish
+	var end = stream.end;
+	stream.end = function() {
+		onend();
+		end.apply(this, arguments);
+	};
+};
+
 var destroyer = function(stream, callback) {
 	var ended = false;
 	var closed = false;
@@ -29,6 +37,8 @@ var destroyer = function(stream, callback) {
 		destroyed = true;
 		stream.destroy();
 	};
+
+	if (!stream._readableState && stream.writable) patch(stream, onend);
 
 	return destroy;
 };
