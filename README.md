@@ -1,6 +1,6 @@
 # pump
 
-pump is a small node module that pipes streams together and destroy them if one of them closes.
+pump is a small node module that pipes streams together and destroys all of them if one of them closes.
 
 	npm install pump
 
