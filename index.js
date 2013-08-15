@@ -38,7 +38,7 @@ var destroyer = function(stream, callback) {
 		stream.destroy();
 	};
 
-	if (!stream._readableState && stream.writable) patch(stream, onend);
+	if (!stream._writableState && stream.writable) patch(stream, onend);
 
 	return destroy;
 };
