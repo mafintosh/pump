@@ -51,9 +51,13 @@ var pipe = function(from, to) {
 	return from.pipe(to);
 };
 
+var functionish = function(fn) {
+	return !fn || typeof fn === 'function';
+};
+
 var pump = function() {
 	var streams = Array.prototype.slice.call(arguments);
-	var callback = typeof streams[streams.length-1] === 'function' ? streams.pop() : noop;
+	var callback = functionish(streams[streams.length-1]) && streams.pop() || noop;
 
 	if (Array.isArray(streams[0])) streams = streams[0];
 
