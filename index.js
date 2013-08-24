@@ -1,46 +1,48 @@
 var once = require('once');
 var noop = function() {};
 
-var patch = function(stream, onend) { // patch 0.8 stream since they dont emit finish
+var patch = function(stream, callback) { // patch 0.8 stream since they dont emit finish
 	var end = stream.end;
 	stream.end = function() {
-		onend();
+		callback();
 		end.apply(this, arguments);
 	};
 };
 
-var destroyer = function(stream, callback) {
-	var ended = false;
-	var closed = false;
-	var destroyed = false;
-
+var destroyer = function(stream, reading, writing, callback) {
 	callback = once(callback);
 
-	var onend = function() {
-		ended = true;
-		callback();
-	};
+	var destroyed = false;
+	var closed = false;
 
-	var onclose = function() {
-		closed = true;
-		if (ended || (stream._readableState && stream._readableState.ended)) return;
-		callback(new Error('stream closed'));
+	var onfinish = function() {
+		writing = false;
+		if (!reading) callback();
 	};
 
 	stream.on('error', callback);
-	stream.on('close', onclose);
-	stream.on('finish', onend);
-	stream.on('end', onend);
 
-	var destroy = function() {
-		if (ended || closed || destroyed || !stream.destroy) return;
+	stream.on('finish', onfinish);
+
+	stream.on('end', function() {
+		reading = false;
+		if (!writing) callback();
+	});
+
+	stream.on('close', function() {
+		closed = true;
+		if (!reading && !writing) return;
+		if (reading && stream._readableState && stream._readableState.ended) return;
+		callback(new Error('stream closed'));
+	});
+
+	if (writing && stream.writable && !stream._writableState) patch(stream, onfinish);
+
+	return function() {
+		if (closed || destroyed || (!reading && !writing) || !stream.destroy) return;
 		destroyed = true;
 		stream.destroy();
 	};
-
-	if (!stream._writableState && stream.writable) patch(stream, onend);
-
-	return destroy;
 };
 
 var call = function(fn) {
@@ -61,12 +63,17 @@ var pump = function() {
 
 	if (Array.isArray(streams[0])) streams = streams[0];
 
+	var error;
+	var readables = Math.max(streams.length-1, 1);
 	var destroys = streams.map(function(stream, i) {
-		return destroyer(stream, function(err) {
+		var reading = i < readables;
+		var writing = i > 0;
+		return destroyer(stream, reading, writing, function(err) {
+			if (!error) error = err;
 			if (err) destroys.forEach(call);
-			if (i < streams.length-1) return;
+			if (reading) return;
 			destroys.forEach(call);
-			callback(err);
+			callback(error);
 		});
 	});
 
