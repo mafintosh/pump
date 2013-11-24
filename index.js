@@ -42,6 +42,9 @@ var destroyer = function(stream, reading, writing, callback) {
 		if (closed || destroyed || (!reading && !writing) || !stream.destroy) return;
 		destroyed = true;
 		stream.destroy();
+		process.nextTick(function() {
+			callback(new Error('stream destroyed'));
+		});
 	};
 };
 
