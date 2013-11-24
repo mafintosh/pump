@@ -39,12 +39,11 @@ var destroyer = function(stream, reading, writing, callback) {
 	if (writing && stream.writable && !stream._writableState) patch(stream, onfinish);
 
 	return function() {
-		if (closed || destroyed || (!reading && !writing) || !stream.destroy) return;
+		if (closed || destroyed || (!reading && !writing)) return;
 		destroyed = true;
-		stream.destroy();
-		process.nextTick(function() {
-			callback(new Error('stream destroyed'));
-		});
+		if (stream.destroy) return stream.destroy();
+		if (stream.end) return stream.end();
+		callback(new Error('stream was destroyed'));
 	};
 };
 
