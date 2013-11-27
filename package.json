@@ -1,13 +1,19 @@
 {
   "name": "pump",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "repository": "git://github.com/mafintosh/pump.git",
   "license": "MIT",
   "description": "pipe streams together and close all of them if one of them closes",
-  "keywords": ["streams", "pipe", "destroy", "callback"],
+  "keywords": [
+    "streams",
+    "pipe",
+    "destroy",
+    "callback"
+  ],
   "author": "Mathias Buus Madsen <mathiasbuus@gmail.com>",
   "dependencies": {
-    "once": "~1.2.0"
+    "once": "~1.2.0",
+    "end-of-stream": "~0.1.1"
   },
   "scripts": {
     "test": "node test.js"
