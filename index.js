@@ -24,7 +24,11 @@ var destroyer = function(stream, reading, writing, callback) {
 		closed = true;
 	});
 
-	eos(stream, {readable:reading, writable:writing}, callback);
+	eos(stream, {readable:reading, writable:writing}, function(err) {
+		if (err) return callback(err);
+		closed = true;
+		callback();
+	});
 
 	var destroyed = false;
 	return function(err) {
