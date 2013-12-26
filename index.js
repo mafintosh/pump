@@ -13,7 +13,7 @@ var isFS = function(stream) {
 };
 
 var isRequest = function(stream) {
-	return stream.setHeader && typeof isFn(stream.abort);
+	return stream.setHeader && isFn(stream.abort);
 };
 
 var destroyer = function(stream, reading, writing, callback) {
