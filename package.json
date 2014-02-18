@@ -13,7 +13,7 @@
   "author": "Mathias Buus Madsen <mathiasbuus@gmail.com>",
   "dependencies": {
     "once": "~1.2.0",
-    "end-of-stream": "~0.1.2"
+    "end-of-stream": "~0.1.4"
   },
   "scripts": {
     "test": "node test.js"
