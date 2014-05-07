@@ -4,6 +4,8 @@ pump is a small node module that pipes streams together and destroys all of them
 
 	npm install pump
 
+[![build status](http://img.shields.io/travis/mafintosh/pump.svg)](http://travis-ci.org/mafintosh/pump)
+
 ## What problem does it solve?
 
 When using standard `source.pipe(dest)` source will _not_ be destroyed if dest emits close or an error.
