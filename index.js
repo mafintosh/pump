@@ -9,7 +9,7 @@ var isFn = function(fn) {
 };
 
 var isFS = function(stream) {
-	return (stream instanceof (fs.ReadStream || noop) || stream instanceof fs.WriteStream) && isFn(stream.close);
+	return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) && isFn(stream.close);
 };
 
 var isRequest = function(stream) {
