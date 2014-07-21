@@ -1,6 +1,6 @@
 {
   "name": "pump",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "repository": "git://github.com/mafintosh/pump.git",
   "license": "MIT",
   "description": "pipe streams together and close all of them if one of them closes",
