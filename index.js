@@ -17,17 +17,26 @@ var isRequest = function(stream) {
 };
 
 var destroyer = function(stream, reading, writing, callback) {
+	var streamError = null;
 	callback = once(callback);
 
 	var closed = false;
+	stream.on('error', function(err) {
+		streamError = err;
+	});
+
 	stream.on('close', function() {
 		closed = true;
 	});
 
 	eos(stream, {readable:reading, writable:writing}, function(err) {
-		if (err) return callback(err);
-		closed = true;
-		callback();
+		process.nextTick(function() {
+			err = streamError || err;
+			if (err) return callback(err);
+			closed = true;
+			callback();
+		});
+
 	});
 
 	var destroyed = false;
