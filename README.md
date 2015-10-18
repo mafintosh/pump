@@ -48,3 +48,7 @@ If `source`, `transform`, `anotherTransform` or `dest` closes all of them will b
 ## License
 
 MIT
+
+## Related
+
+`pump` is part of the [mississippi stream utility collection](https://github.com/maxogden/mississippi) which includes more useful stream modules similar to this one.
