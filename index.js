@@ -17,7 +17,12 @@ var isRequest = function(stream) {
 };
 
 var destroyer = function(stream, reading, writing, callback) {
+	var streamError = null;
 	callback = once(callback);
+
+	stream.on('error', function(err) {
+		streamError = err;
+	});
 
 	var closed = false;
 	stream.on('close', function() {
@@ -25,9 +30,13 @@ var destroyer = function(stream, reading, writing, callback) {
 	});
 
 	eos(stream, {readable:reading, writable:writing}, function(err) {
-		if (err) return callback(err);
-		closed = true;
-		callback();
+		process.nextTick(function() {
+			err = streamError || err;
+			if (err) return callback(err);
+			closed = true;
+			callback();
+		});
+
 	});
 
 	var destroyed = false;
@@ -39,14 +48,14 @@ var destroyer = function(stream, reading, writing, callback) {
 		if (isFS(stream)) return stream.close(); // use close for fs streams to avoid fd leaks
 		if (isRequest(stream)) return stream.abort(); // request.destroy just do .end - .abort is what we want
 
-		if (isFn(stream.destroy)) return stream.destroy();
+		if (isFn(stream.destroy)) return stream.destroy(err);
 
 		callback(err || new Error('stream was destroyed'));
 	};
 };
 
-var call = function(fn) {
-	fn();
+var call = function(err, fn) {
+	fn(err);
 };
 
 var pipe = function(from, to) {
@@ -66,9 +75,9 @@ var pump = function() {
 		var writing = i > 0;
 		return destroyer(stream, reading, writing, function(err) {
 			if (!error) error = err;
-			if (err) destroys.forEach(call);
+			if (err) destroys.forEach(call.bind(this, err));
 			if (reading) return;
-			destroys.forEach(call);
+			destroys.forEach(call.bind(this, null));
 			callback(error);
 		});
 	});

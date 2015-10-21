@@ -1,4 +1,3 @@
-var assert = require('assert');
 var pump = require('./index');
 
 var rs = require('fs').createReadStream('/dev/random');
@@ -18,9 +17,11 @@ var toHex = function() {
 var wsClosed = false;
 var rsClosed = false;
 var callbackCalled = false;
+var cbError = null;
+var tsError = null;
 
 var check = function() {
-	if (wsClosed && rsClosed && callbackCalled) process.exit(0);
+	if (wsClosed && rsClosed && callbackCalled && cbError === tsError && cbError === "Error from stream") process.exit(0);
 };
 
 ws.on('close', function() {
@@ -33,13 +34,20 @@ rs.on('close', function() {
 	check();
 });
 
-pump(rs, toHex(), toHex(), toHex(), ws, function(err) {
+var ts = toHex();
+ts.destroy = function(err) {
+	tsError = err;
+};
+
+pump(rs, toHex(), toHex(), ts, ws, function(err) {
+	cbError = err;
 	callbackCalled = true;
 	check();
 });
 
 setTimeout(function() {
 	rs.destroy();
+	rs.emit('error', "Error from stream");
 }, 1000);
 
 setTimeout(function() {
