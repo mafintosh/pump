@@ -2,7 +2,9 @@
 
 pump is a small node module that pipes streams together and destroys all of them if one of them closes.
 
-	npm install pump
+```
+npm install pump
+```
 
 [![build status](http://img.shields.io/travis/mafintosh/pump.svg?style=flat)](http://travis-ci.org/mafintosh/pump)
 
@@ -18,29 +20,29 @@ pump does these two things for you
 Simply pass the streams you want to pipe together to pump and add an optional callback
 
 ``` js
-var pump = require('pump');
-var fs = require('fs');
+var pump = require('pump')
+var fs = require('fs')
 
-var source = fs.createReadStream('/dev/random');
-var dest = fs.createWriteStream('/dev/null');
+var source = fs.createReadStream('/dev/random')
+var dest = fs.createWriteStream('/dev/null')
 
 pump(source, dest, function(err) {
-	console.log('pipe finished', err);
-});
+  console.log('pipe finished', err)
+})
 
 setTimeout(function() {
-	dest.destroy(); // when dest is closed pump will destroy source
-}, 1000);
+  dest.destroy() // when dest is closed pump will destroy source
+}, 1000)
 ```
 
 You can use pump to pipe more than two streams together as well
 
 ``` js
-var transform = someTransformStream();
+var transform = someTransformStream()
 
 pump(source, transform, anotherTransform, dest, function(err) {
-	console.log('pipe finished', err);
-});
+  console.log('pipe finished', err)
+})
 ```
 
 If `source`, `transform`, `anotherTransform` or `dest` closes all of them will be destroyed.
