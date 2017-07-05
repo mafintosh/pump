@@ -47,6 +47,8 @@ pump(source, transform, anotherTransform, dest, function(err) {
 
 If `source`, `transform`, `anotherTransform` or `dest` closes all of them will be destroyed.
 
+**NB:** not all streams emits `close` event, so the callback will not be called.
+
 ## License
 
 MIT
