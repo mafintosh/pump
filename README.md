@@ -47,6 +47,8 @@ pump(source, transform, anotherTransform, dest, function(err) {
 
 If `source`, `transform`, `anotherTransform` or `dest` closes all of them will be destroyed.
 
+**NB:** not all streams emits `close` event. For that streams (like [`process.stdout`](https://nodejs.org/api/process.html#process_process_stdout)), the callback will not be called.
+
 ## License
 
 MIT
