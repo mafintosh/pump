@@ -32,10 +32,14 @@ rs.on('close', function () {
   check()
 })
 
-pump(rs, toHex(), toHex(), toHex(), ws, function () {
+var res = pump(rs, toHex(), toHex(), toHex(), ws, function () {
   callbackCalled = true
   check()
 })
+
+if (res) {
+  process.exit(1);
+}
 
 setTimeout(function () {
   rs.destroy()

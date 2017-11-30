@@ -74,7 +74,7 @@ var pump = function () {
     })
   })
 
-  return streams.reduce(pipe)
+  streams.reduce(pipe)
 }
 
 module.exports = pump
