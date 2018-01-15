@@ -1,5 +1,7 @@
 var pump = require('./index')
 
+var eos = require('end-of-stream')
+
 var rs = require('fs').createReadStream('/dev/random')
 var ws = require('fs').createWriteStream('/dev/null')
 
@@ -12,6 +14,16 @@ var toHex = function () {
   }
 
   return reverse
+}
+
+var withErr = function() {
+  var errs = new (require('stream').Transform)()
+
+  errs._transform = function (chunk, enc, callback) {
+    callback(new Error('Fails'))
+  }
+
+  return errs
 }
 
 var wsClosed = false
@@ -41,8 +53,19 @@ if (res !== ws) {
   throw new Error('should return last stream')
 }
 
+// Don't return streams
+var rs2 = require('fs').createReadStream('/dev/random')
+var ws2 = require('fs').createWriteStream('/dev/null')
+
+eos(pump(rs2, withErr(), ws2), function(err) {
+  if (!err) {
+    throw new Error('should propagate error on stream')
+  }
+})
+
 setTimeout(function () {
   rs.destroy()
+  rs2.destroy()
 }, 1000)
 
 setTimeout(function () {
