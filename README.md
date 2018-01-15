@@ -47,6 +47,12 @@ pump(source, transform, anotherTransform, dest, function(err) {
 
 If `source`, `transform`, `anotherTransform` or `dest` closes all of them will be destroyed.
 
+Similarly to `stream.pipe()`, `pump()` returns the last stream passed in, so you can do:
+
+```
+return pump(s1, s2) // returns s2
+```
+
 ## License
 
 MIT
