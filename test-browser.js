@@ -30,7 +30,10 @@ var rsClosed = false
 var callbackCalled = false
 
 var check = function () {
-  if (wsClosed && rsClosed && callbackCalled) console.log('done')
+  if (wsClosed && rsClosed && callbackCalled) {
+    console.log('done')
+    process.exit(0)
+  }
 }
 
 ws.on('finish', function () {
@@ -54,5 +57,6 @@ setTimeout(function () {
 }, 1000)
 
 setTimeout(function () {
-  if (!check()) throw new Error('timeout')
+  check()
+  throw new Error('timeout')
 }, 5000)
