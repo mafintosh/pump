@@ -19,7 +19,10 @@ var rsClosed = false
 var callbackCalled = false
 
 var check = function () {
-  if (wsClosed && rsClosed && callbackCalled) process.exit(0)
+  if (wsClosed && rsClosed && callbackCalled) {
+    console.log('test-node.js passes')
+    clearTimeout(timeout)
+  }
 }
 
 ws.on('close', function () {
@@ -38,13 +41,13 @@ var res = pump(rs, toHex(), toHex(), toHex(), ws, function () {
 })
 
 if (res) {
-  process.exit(1);
+  process.exit(1)
 }
 
 setTimeout(function () {
   rs.destroy()
 }, 1000)
 
-setTimeout(function () {
+var timeout = setTimeout(function () {
   throw new Error('timeout')
 }, 5000)

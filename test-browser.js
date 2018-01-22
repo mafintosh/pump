@@ -31,8 +31,8 @@ var callbackCalled = false
 
 var check = function () {
   if (wsClosed && rsClosed && callbackCalled) {
-    console.log('done')
-    process.exit(0)
+    console.log('test-browser.js passes')
+    clearTimeout(timeout)
   }
 }
 
@@ -56,7 +56,7 @@ setTimeout(function () {
   rs.emit('close')
 }, 1000)
 
-setTimeout(function () {
+var timeout = setTimeout(function () {
   check()
   throw new Error('timeout')
 }, 5000)
