@@ -53,6 +53,9 @@ Similarly to `stream.pipe()`, `pump()` returns the last stream passed in, so you
 return pump(s1, s2) // returns s2
 ```
 
+If you want to return a stream that combines *both* s1 and s2 to a single stream use
+[pumpify](https://github.com/mafintosh/pumpify) instead.
+
 ## License
 
 MIT
