@@ -53,6 +53,9 @@ Similarly to `stream.pipe()`, `pump()` returns the last stream passed in, so you
 return pump(s1, s2) // returns s2
 ```
 
+Note that `pump` attaches error handlers to the streams to do internal error handling, so if `s2` emits an
+error in the above scenario, it will not trigger a `proccess.on('uncaughtException')` if you do not listen for it.
+
 If you want to return a stream that combines *both* s1 and s2 to a single stream use
 [pumpify](https://github.com/mafintosh/pumpify) instead.
 
