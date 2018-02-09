@@ -35,6 +35,8 @@ setTimeout(function() {
 }, 1000)
 ```
 
+If an `err` is returned in the callback it will have a `streamIndex` property indicating from which stream the error originated from.
+
 You can use pump to pipe more than two streams together as well
 
 ``` js
