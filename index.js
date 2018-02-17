@@ -4,11 +4,12 @@ var fs = require('fs') // we only need fs to get the ReadStream and WriteStream 
 
 var noop = function () {}
 var ancient = /^v?\.0/.test(process.version)
+var ReadStream = fs && fs.ReadStream || noop
+var WriteStream = fs && fs.WriteStream || noop
 
 var isFS = function (stream) {
   if (!ancient) return false // newer node version do not need to care about fs is a special way
-  if (!fs) return false // browser
-  return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) &&
+  return (stream instanceof ReadStream || stream instanceof WriteStream) &&
     typeof stream.close === 'function'
 }
 
