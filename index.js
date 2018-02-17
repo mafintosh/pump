@@ -5,18 +5,15 @@ var fs = require('fs') // we only need fs to get the ReadStream and WriteStream 
 var noop = function () {}
 var ancient = /^v?\.0/.test(process.version)
 
-var isFn = function (fn) {
-  return typeof fn === 'function'
-}
-
 var isFS = function (stream) {
   if (!ancient) return false // newer node version do not need to care about fs is a special way
   if (!fs) return false // browser
-  return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) && isFn(stream.close)
+  return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) &&
+    typeof stream.close === 'function'
 }
 
 var isRequest = function (stream) {
-  return stream.setHeader && isFn(stream.abort)
+  return stream.setHeader && typeof stream.abort === 'function'
 }
 
 var destroyer = function (stream, reading, writing, callback) {
@@ -42,7 +39,7 @@ var destroyer = function (stream, reading, writing, callback) {
     if (isFS(stream)) return stream.close(noop) // use close for fs streams to avoid fd leaks
     if (isRequest(stream)) return stream.abort() // request.destroy just do .end - .abort is what we want
 
-    if (isFn(stream.destroy)) return stream.destroy()
+    if (typeof stream.destroy === 'function') return stream.destroy()
 
     callback(err || new Error('stream was destroyed'))
   }
