@@ -2,7 +2,9 @@ var once = require('once')
 var eos = require('end-of-stream')
 var fs = require('fs') // we only need fs to get the ReadStream and WriteStream prototypes
 
-var noop = function () {}
+var noop = function (err) {
+  if (err) throw err
+}
 var ancient = /^v?\.0/.test(process.version)
 
 var isFn = function (fn) {
