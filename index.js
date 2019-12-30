@@ -71,7 +71,7 @@ var pump = function () {
       if (!error) error = err
       if (err) destroys.forEach(call)
       if (reading) return
-      destroys.forEach(call)
+      if (!err) destroys.forEach(call)
       callback(error)
     })
   })
