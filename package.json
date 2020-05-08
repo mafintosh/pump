@@ -20,5 +20,8 @@
   },
   "scripts": {
     "test": "node test-browser.js && node test-node.js"
-  }
+  },
+  "files": [
+    "index.js"
+  ]
 }
