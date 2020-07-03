@@ -42,7 +42,7 @@ var destroyer = function (stream, reading, writing, callback) {
     if (isFS(stream)) return stream.close(noop) // use close for fs streams to avoid fd leaks
     if (isRequest(stream)) return stream.abort() // request.destroy just do .end - .abort is what we want
 
-    if (isFn(stream.destroy)) return stream.destroy()
+    if (isFn(stream.destroy)) return stream.destroy(err)
 
     callback(err || new Error('stream was destroyed'))
   }
@@ -69,7 +69,7 @@ var pump = function () {
     var writing = i > 0
     return destroyer(stream, reading, writing, function (err) {
       if (!error) error = err
-      if (err) destroys.forEach(call)
+      if (err) destroys.forEach(fn => fn(err))
       if (reading) return
       destroys.forEach(call)
       callback(error)
