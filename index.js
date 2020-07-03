@@ -68,7 +68,10 @@ var pump = function () {
     var reading = i < streams.length - 1
     var writing = i > 0
     return destroyer(stream, reading, writing, function (err) {
-      if (!error) error = err
+      if (!error && err) {
+        error = err
+        error.streamIndex = i
+      }
       if (err) destroys.forEach(call)
       if (reading) return
       destroys.forEach(call)
