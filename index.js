@@ -4,7 +4,7 @@ var fs
 
 try {
   fs = require('fs') // we only need fs to get the ReadStream and WriteStream prototypes
-} catch {}
+} catch (e) {}
 
 var noop = function () {}
 var ancient = /^v?\.0/.test(process.version)
