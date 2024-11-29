@@ -8,19 +8,17 @@ try {
 
 var noop = function () {}
 var ancient = /^v?\.0/.test(process.version)
-
-var isFn = function (fn) {
-  return typeof fn === 'function'
-}
+var ReadStream = fs && fs.ReadStream || noop
+var WriteStream = fs && fs.WriteStream || noop
 
 var isFS = function (stream) {
   if (!ancient) return false // newer node version do not need to care about fs is a special way
-  if (!fs) return false // browser
-  return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) && isFn(stream.close)
+  return (stream instanceof ReadStream || stream instanceof WriteStream) &&
+    typeof stream.close === 'function'
 }
 
 var isRequest = function (stream) {
-  return stream.setHeader && isFn(stream.abort)
+  return stream.setHeader && typeof stream.abort === 'function'
 }
 
 var destroyer = function (stream, reading, writing, callback) {
@@ -46,7 +44,7 @@ var destroyer = function (stream, reading, writing, callback) {
     if (isFS(stream)) return stream.close(noop) // use close for fs streams to avoid fd leaks
     if (isRequest(stream)) return stream.abort() // request.destroy just do .end - .abort is what we want
 
-    if (isFn(stream.destroy)) return stream.destroy()
+    if (typeof stream.destroy === 'function') return stream.destroy()
 
     callback(err || new Error('stream was destroyed'))
   }
@@ -62,7 +60,7 @@ var pipe = function (from, to) {
 
 var pump = function () {
   var streams = Array.prototype.slice.call(arguments)
-  var callback = isFn(streams[streams.length - 1] || noop) && streams.pop() || noop
+  var callback = streams.pop() || noop
 
   if (Array.isArray(streams[0])) streams = streams[0]
   if (streams.length < 2) throw new Error('pump requires two streams per minimum')
