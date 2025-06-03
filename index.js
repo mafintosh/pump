@@ -7,7 +7,7 @@ try {
 } catch (e) {}
 
 var noop = function () {}
-var ancient = /^v?\.0/.test(process.version)
+var ancient = false // old check which was true for node 0.x, so no longer relevant
 
 var isFn = function (fn) {
   return typeof fn === 'function'
