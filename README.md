@@ -2,18 +2,20 @@
 
 pump is a small node module that pipes streams together and destroys all of them if one of them closes.
 
-```
-npm install pump
-```
-
-[![build status](http://img.shields.io/travis/mafintosh/pump.svg?style=flat)](http://travis-ci.org/mafintosh/pump)
-
 ## What problem does it solve?
 
 When using standard `source.pipe(dest)` source will _not_ be destroyed if dest emits close or an error.
 You are also not able to provide a callback to tell when then pipe has finished.
 
 pump does these two things for you
+
+## Installation
+
+Install with a npm-compatible package manager like npm, yarn, or bun.
+
+```sh
+npm install pump
+```
 
 ## Usage
 
