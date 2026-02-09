@@ -1,6 +1,14 @@
-var once = require('once')
 var eos = require('end-of-stream')
 var fs
+
+var once = function (fn) {
+  var called = false
+  return function () {
+    if (called) return
+    called = true
+    return fn.apply(this, arguments)
+  }
+}
 
 try {
   fs = require('fs') // we only need fs to get the ReadStream and WriteStream prototypes

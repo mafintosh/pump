@@ -15,8 +15,7 @@
   ],
   "author": "Mathias Buus Madsen <mathiasbuus@gmail.com>",
   "dependencies": {
-    "end-of-stream": "^1.1.0",
-    "once": "^1.3.1"
+    "end-of-stream": "^1.1.0"
   },
   "scripts": {
     "test": "node test-browser.js && node test-node.js"
