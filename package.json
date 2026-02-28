@@ -7,6 +7,12 @@
   "browser": {
     "fs": false
   },
+  "imports": {
+    "fs": {
+      "bare": "./empty.js",
+      "default": "fs"
+    }
+  },
   "keywords": [
     "streams",
     "pipe",
