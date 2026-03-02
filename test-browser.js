@@ -27,10 +27,10 @@ var toHex = function () {
 
 var wsClosed = false
 var rsClosed = false
-var callbackCalled = false
+var callbackCount = 0
 
 var check = function () {
-  if (wsClosed && rsClosed && callbackCalled) {
+  if (wsClosed && rsClosed && callbackCount === 1) {
     console.log('test-browser.js passes')
     clearTimeout(timeout)
   }
@@ -47,7 +47,8 @@ rs.on('end', function () {
 })
 
 var res = pump(rs, toHex(), toHex(), toHex(), ws, function () {
-  callbackCalled = true
+  callbackCount++
+  if (callbackCount > 1) throw new Error('pump callback called more than once')
   check()
 })
 
@@ -64,3 +65,32 @@ var timeout = setTimeout(function () {
   check()
   throw new Error('timeout')
 }, 5000)
+
+// Test: callback fires only once when a transform errors mid-pipeline
+;(function () {
+  var rs2 = new stream.Readable()
+  var ws2 = new stream.Writable()
+  var ts = new stream.Transform()
+
+  rs2._read = function () {
+    this.push(Buffer.alloc(64).fill('x'))
+  }
+
+  var count = 0
+  ts._transform = function (chunk, enc, next) {
+    count++
+    if (count === 3) return next(new Error('transform error'))
+    this.push(chunk)
+    next()
+  }
+
+  ws2._write = function (chunk, enc, next) {
+    next()
+  }
+
+  var errorCallbackCount = 0
+  pump(rs2, ts, ws2, function () {
+    errorCallbackCount++
+    if (errorCallbackCount > 1) throw new Error('error pump callback called more than once')
+  })
+})()

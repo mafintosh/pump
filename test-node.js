@@ -16,10 +16,10 @@ var toHex = function () {
 
 var wsClosed = false
 var rsClosed = false
-var callbackCalled = false
+var callbackCount = 0
 
 var check = function () {
-  if (wsClosed && rsClosed && callbackCalled) {
+  if (wsClosed && rsClosed && callbackCount === 1) {
     console.log('test-node.js passes')
     clearTimeout(timeout)
   }
@@ -36,7 +36,8 @@ rs.on('close', function () {
 })
 
 var res = pump(rs, toHex(), toHex(), toHex(), ws, function () {
-  callbackCalled = true
+  callbackCount++
+  if (callbackCount > 1) throw new Error('pump callback called more than once')
   check()
 })
 
